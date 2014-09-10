@@ -25,7 +25,6 @@ namespace Ballax
             player.init();
 
             var ball = new Ball();
-            ball.resetCoords();
             player.bindBall(ball);
         }
     }

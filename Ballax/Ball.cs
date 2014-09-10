@@ -8,22 +8,25 @@ namespace Ballax
     public class Ball
     {
         int x, y;
-
-        /*
-         * (-1, -1) coords - ball isn't picked up 
-         */
-        public void resetCoords()
-        {
-            this.x = -1;
-            this.y = -1;
+        /* currently active field */
+        public Field current {
+            set; get;
         }
 
-        public void setCoords(int x, int y)
+        public void setCurrent(Field field) 
         {
-            this.x = x;
-            this.y = y;
+            this.current = field;
         }
 
+        public Field getCurrent()
+        {
+            return this.current;
+        }
+
+        public void unset()
+        {
+            this.current = null;
+        }
         
     }
 }

@@ -8,9 +8,10 @@ using System.Windows.Forms;
 
 namespace Ballax
 {
-    class Field : Button
+    public class Field : Button
     {
-        int state;
+        /* 0 or ball type */
+        int state = 0;
         int width, height;
         int x, y;
 
@@ -49,7 +50,13 @@ namespace Ballax
             this.FlatAppearance.MouseDownBackColor = Color.White;
             this.FlatAppearance.MouseOverBackColor = Color.White;           //highlight field
             this.Cursor = Cursors.Hand;
-            this.Name = "button_" + x.ToString() + "_" + y.ToString();      //assing unique id
+            this.Name = "button_" + x.ToString() + "_" + y.ToString();      //assign unique id
+
+            if (x == 2)
+            {
+                this.state = 1;
+                this.BackgroundImage = Ballax.Images.ball1;
+            }
         }
 
         public void bindClickEvent()
@@ -71,6 +78,7 @@ namespace Ballax
                 /* retrieve x & y position of clicked button */
                 string controlName = button.Name.ToString();
                 string[] controlNameSplitted = controlName.Split('_');
+                /* get x&y pos from name */
                 int controlIndexX = int.Parse(controlNameSplitted[1]);
                 int controlIndexY = int.Parse(controlNameSplitted[2]);
 
@@ -80,10 +88,15 @@ namespace Ballax
                     /* is this field empty? case 1.1 */
                     if (this._checkIfEmpty())
                     {
+                        System.Diagnostics.Debug.WriteLine("Field click: is empty - put to " + this.x.ToString() + ", " + this.y.ToString());
                         //put ball here
-
+                        this.putBall();
                         player.PICKED_UP = false;
-                    }                     
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Field click: is not empty - prevent put");
+                    }
                 }
                 // case 2
                 else
@@ -91,8 +104,9 @@ namespace Ballax
                     /* is this field empty? case 2.2 */
                     if (!this._checkIfEmpty())
                     {
+                        System.Diagnostics.Debug.WriteLine("Field click: picked up the ball from " + this.x.ToString() + ", " + this.y.ToString());
                         //pick up the ball
-                        player.ball.setCoords(this.x, this.y);
+                        player.ball.setCurrent(this);
                         player.PICKED_UP = true;
                     }   
                 }
@@ -106,6 +120,29 @@ namespace Ballax
                 return false;
             }
             return true;
+        }
+
+        public void putBall()
+        {
+            Player player = Player.Instance;
+            Field currentField = player.ball.getCurrent();
+
+            System.Diagnostics.Debug.WriteLine(this.state);
+            if (this.state <= 0)
+            {
+                
+                this.state = 1;
+                this.BackgroundImage = Ballax.Images.ball1;
+
+                //release selected field
+                currentField.release();
+            }
+        }
+
+        public void release()
+        {
+            this.state = 0;
+            this.BackgroundImage = null;
         }
     }
 }
