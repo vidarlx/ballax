@@ -23,36 +23,37 @@ namespace Ballax
         const int FIELD_WIDTH = 45;
         const int FIELD_HEIGHT = 45;
 
-        int[][] fieldsState;
         Field[][] fields;
 
         /* drawing context */
         Panel drawingArea = null;
 
-        public Board(Panel panel)
+        private static Board instance = null;
+        private Board() { }
+
+        public static Board Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Board();
+                }
+
+                return instance;
+            }
+
+        }
+
+        public void setDrawingArea(Panel panel)
         {
             drawingArea = panel;
-            fields = new Field[BOARD_SIZE][];
         }
 
         public void draw()
         {
-            this._initFieldStates();
+            fields = new Field[BOARD_SIZE][];
             this._drawFields(BOARD_SIZE);
-        }
-
-        /* initialize board fields with state 0 - empty field */
-        private void _initFieldStates()
-        {
-            fieldsState = new int[BOARD_SIZE][];
-            for (int i = 0; i < BOARD_SIZE; i++)
-            {
-                fieldsState[i] = new int[BOARD_SIZE];
-                for (int j = 0; j < BOARD_SIZE; j++)
-                {
-                    fieldsState[i][j] = 0;   
-                }
-            }
         }
 
         /* draw all fields on board */
@@ -81,6 +82,33 @@ namespace Ballax
 
             /* add created field to the drawing context */
             drawingArea.Controls.Add(fields[i][j]);
+        }
+
+        public void putRandomBalls(int amount)
+        {
+            int randomX, randomY, randomType;
+            Random random = new Random();
+
+            /* Get random fields for putting new balls.
+             * Omit non-empty fields - we can't put there
+             */
+            for (int i = 0; i < amount; i++)
+            {
+                randomX = random.Next(0, BOARD_SIZE);
+                randomY = random.Next(0, BOARD_SIZE);
+                randomType = random.Next(1, 4);
+
+                if (fields[randomX][randomY].getState() == 0)
+                {
+                    fields[randomX][randomY].putBall(randomType);
+                }
+                else
+                {
+                    i--;
+                }
+                System.Diagnostics.Debug.WriteLine("Put on " + randomX + "," + randomY + " : " + randomType);
+            }
+            
         }
 
     }

@@ -18,14 +18,16 @@ namespace Ballax
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var board = new Board(pBoardArea);
-            board.draw();
-
             Player player = Player.Instance;
             player.init();
 
             var ball = new Ball();
             player.bindBall(ball);
+
+            var board = Board.Instance;
+            board.setDrawingArea(pBoardArea);
+            board.draw();
+            board.putRandomBalls(3);
         }
     }
 }

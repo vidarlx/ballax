@@ -14,6 +14,12 @@ namespace Ballax
         int state = 0;
         int width, height;
         int x, y;
+        Board board = Board.Instance;
+
+        public int getState()
+        {
+            return this.state;
+        }
 
         public void setWidth(int width)
         {
@@ -51,12 +57,6 @@ namespace Ballax
             this.FlatAppearance.MouseOverBackColor = Color.White;           //highlight field
             this.Cursor = Cursors.Hand;
             this.Name = "button_" + x.ToString() + "_" + y.ToString();      //assign unique id
-
-            if (x == 2)
-            {
-                this.state = 1;
-                this.BackgroundImage = Ballax.Images.ball1;
-            }
         }
 
         public void bindClickEvent()
@@ -90,12 +90,15 @@ namespace Ballax
                     {
                         System.Diagnostics.Debug.WriteLine("Field click: is empty - put to " + this.x.ToString() + ", " + this.y.ToString());
                         //put ball here
-                        this.putBall();
+                        Field currentField = player.ball.getCurrent();
+                        this.putBall(currentField.state);
+
+                        //release lastly ocuppied field
+                        currentField.release();
                         player.PICKED_UP = false;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("Field click: is not empty - prevent put");
+
+                        /* put new balls */
+                        board.putRandomBalls(3);
                     }
                 }
                 // case 2
@@ -105,10 +108,10 @@ namespace Ballax
                     if (!this._checkIfEmpty())
                     {
                         System.Diagnostics.Debug.WriteLine("Field click: picked up the ball from " + this.x.ToString() + ", " + this.y.ToString());
-                        //pick up the ball
+                        /* pick up the ball */
                         player.ball.setCurrent(this);
                         player.PICKED_UP = true;
-                    }   
+                    }
                 }
             };
         }
@@ -122,23 +125,16 @@ namespace Ballax
             return true;
         }
 
-        public void putBall()
+        public void putBall(int type)
         {
-            Player player = Player.Instance;
-            Field currentField = player.ball.getCurrent();
-
-            System.Diagnostics.Debug.WriteLine(this.state);
             if (this.state <= 0)
             {
-                
-                this.state = 1;
-                this.BackgroundImage = Ballax.Images.ball1;
-
-                //release selected field
-                currentField.release();
+                this.state = type;
+                this.BackgroundImage = Ball.getImage(type);
             }
         }
 
+        /* release this field */
         public void release()
         {
             this.state = 0;
