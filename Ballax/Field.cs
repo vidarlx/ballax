@@ -21,6 +21,11 @@ namespace Ballax
             return this.state;
         }
 
+        public void setState(int state)
+        {
+            this.state = state;
+        }
+
         public void setWidth(int width)
         {
             this.width = width;
@@ -81,6 +86,7 @@ namespace Ballax
                 /* get x&y pos from name */
                 int controlIndexX = int.Parse(controlNameSplitted[1]);
                 int controlIndexY = int.Parse(controlNameSplitted[2]);
+                int tmpState = 0;
 
                 // case 1
                 if (player.PICKED_UP)
@@ -91,13 +97,17 @@ namespace Ballax
                         System.Diagnostics.Debug.WriteLine("Field click: is empty - put to " + this.x.ToString() + ", " + this.y.ToString());
                         //put ball here
                         Field currentField = player.ball.getCurrent();
+                        tmpState = currentField.state;
                         this.putBall(currentField.state);
 
                         //release lastly ocuppied field
                         currentField.release();
                         player.PICKED_UP = false;
 
+                        board.tryDeleteNode(this.x, this.y, tmpState);
+
                         /* put new balls */
+                        board.putBallsToBuffer(3);
                         board.putRandomBalls(3);
                     }
                 }

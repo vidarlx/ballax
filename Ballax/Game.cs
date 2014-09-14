@@ -27,6 +27,7 @@ namespace Ballax
             var board = Board.Instance;
             board.setDrawingArea(pBoardArea);
             board.draw();
+            board.initBuffer(panelBuffer);
             board.putRandomBalls(3);
         }
     }
