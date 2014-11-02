@@ -24,16 +24,19 @@ namespace Ballax
         const int FIELD_HEIGHT = 45;
 
         Field[][] fields;
+        Player player = Player.Instance;
 
         /* contains next balls */
         Field[] ballsBuffer = new Field[3];
 
         /* drawing context */
         Panel drawingArea = null;
+        Label lbScore = null;
 
         /* how many same fields we need to remove
          * from board and add points */
         int eraseBorder = 5;
+
 
         private static Board instance = null;
         private Board() { }
@@ -184,8 +187,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, y));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             //horizontaly ( left -> right )
             for (int i = x; i < Board.BOARD_SIZE; i++)
@@ -194,8 +196,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, y));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             if (sameBalls > eraseBorder)
             {
@@ -203,7 +204,7 @@ namespace Ballax
                 {
                     this.removeBallFromField(matchingBalls[i].X, matchingBalls[i].Y);
                 }
-                //addPoints - TODO
+                this.increaseScore(matchingBalls.Count);
                 return true;
             }
 
@@ -215,8 +216,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(x, i));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             for (int i = y; i < Board.BOARD_SIZE; i++)
                 if (fields[x][i].getState() == type)
@@ -224,8 +224,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(x, i));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             if (sameBalls > eraseBorder)
             {
@@ -233,7 +232,7 @@ namespace Ballax
                 {
                     this.removeBallFromField(matchingBalls[i].X, matchingBalls[i].Y);
                 }
-                //addPoints - TODO
+                this.increaseScore(matchingBalls.Count);
                 return true;
             }
 
@@ -245,8 +244,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, j));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             for (int i = x, j = y; i < Board.BOARD_SIZE && j < Board.BOARD_SIZE; i++, j++)
                 if (fields[i][j].getState() == type)
@@ -254,8 +252,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, j));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             if (sameBalls > eraseBorder)
             {
@@ -263,7 +260,7 @@ namespace Ballax
                 {
                     this.removeBallFromField(matchingBalls[i].X, matchingBalls[i].Y);
                 }
-                //addPoints - TODO
+                this.increaseScore(matchingBalls.Count);
                 return true;
             }
 
@@ -275,8 +272,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, j));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             for (int i = x, j = y; i > 0 && j < Board.BOARD_SIZE; i--, j++)
                 if (fields[i][j].getState() == type)
@@ -284,8 +280,7 @@ namespace Ballax
                     matchingBalls.Add(new Point(i, j));
                     sameBalls++;
                 }
-                else
-                    break;
+                else break;
 
             if (sameBalls > eraseBorder)
             {
@@ -293,7 +288,7 @@ namespace Ballax
                 {
                     this.removeBallFromField(matchingBalls[i].X, matchingBalls[i].Y);
                 }
-                //addPoints - TODO
+                this.increaseScore(matchingBalls.Count);
                 return true;
             }
 
@@ -303,6 +298,32 @@ namespace Ballax
         public void removeBallFromField(int x, int y)
         {
             this.fields[x][y].release();
+        }
+
+        private void increaseScore(int score)
+        {
+            int diff = 0;
+            //extra bonus
+            score = --score;
+            System.Diagnostics.Debug.Print("scores: " + score);
+            if (score > 5)
+            {
+                diff = score - 5;
+                score += diff * diff;
+                System.Diagnostics.Debug.Print("bonus: " + diff * diff);
+            }
+            this.player.score += score;
+            this.repaintScore();
+        }
+
+        public void setScoreLabel(Label lb)
+        {
+            this.lbScore = lb;
+        }
+
+        private void repaintScore()
+        {
+            this.lbScore.Text = this.player.score.ToString();
         }
 
     }

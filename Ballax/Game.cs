@@ -28,6 +28,7 @@ namespace Ballax
             board.setDrawingArea(pBoardArea);
             board.draw();
             board.initBuffer(panelBuffer);
+            board.setScoreLabel(lbScore);
             board.putRandomBalls(3);
         }
     }

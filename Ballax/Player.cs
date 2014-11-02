@@ -12,7 +12,7 @@ namespace Ballax
         public Ball ball;
 
         /* player's score */
-        int score;
+        public int score;
 
         //singleton
         private static Player instance = null;
